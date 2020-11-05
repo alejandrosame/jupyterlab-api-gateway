@@ -3,8 +3,9 @@ import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { CommandRegistry } from '@lumino/commands';
 import * as React from 'react';
 
-import { ILanguageSelection } from '../tokens';
+import { ILanguageSelection, IService } from '../tokens';
 import { LanguageSelectionForm } from '../widgets/LanguageSelectionForm';
+import { ServiceMenu } from './ServiceMenu';
 import { Toolbar } from './Toolbar';
 
 /**
@@ -17,9 +18,14 @@ export interface IApiGatewayPanelProps {
   commands: CommandRegistry;
 
   /**
-   * Git extension settings.
+   * ApiGatewayPanel extension settings.
    */
   settings: ISettingRegistry.ISettings;
+
+  /**
+   * ApiGatewayPanel extension settings.
+   */
+  services: IService[];
 }
 
 /**
@@ -31,7 +37,10 @@ export interface IApiGatewayPanelState {
 /**
  * React component for rendering a panel for aggregate API gateway operations.
  */
-export class ApiGatewayPanel extends React.Component<IApiGatewayPanelProps, IApiGatewayPanelState> {
+export class ApiGatewayPanel extends React.Component<
+  IApiGatewayPanelProps,
+  IApiGatewayPanelState
+> {
   /**
    * Returns a React component for rendering a panel for aggregate API operations.
    *
@@ -77,9 +86,17 @@ export class ApiGatewayPanel extends React.Component<IApiGatewayPanelProps, IApi
    * @returns React element
    */
   private _renderMain(): React.ReactElement {
+    const services = this.props.services;
     return (
       <React.Fragment>
-        <div>Main section</div>
+        <ServiceMenu
+          service={services[0]}
+          generateCode={(endpoint) => console.log("Generate code for", endpoint.name)}
+        />
+        <ServiceMenu
+          service={services[1]}
+          generateCode={(endpoint) => console.log("Generate code for", endpoint.name)}
+        />
       </React.Fragment>
     );
   }

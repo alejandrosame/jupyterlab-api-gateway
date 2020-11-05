@@ -3,6 +3,7 @@ import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { CommandRegistry } from '@lumino/commands';
 import { Widget } from '@lumino/widgets';
 import * as React from 'react';
+import { IService } from '../tokens';
 import { ApiGatewayPanel } from '../components/ApiGatewayPanel';
 import { ApiGatewayWidgetStyle } from '../style/ApiGatewayWidgetStyle';
 
@@ -13,6 +14,7 @@ export class ApiGatewayWidget extends ReactWidget {
   constructor(
     settings: ISettingRegistry.ISettings,
     commands: CommandRegistry,
+    services: IService[],
     options?: Widget.IOptions
   ) {
     super(options);
@@ -21,6 +23,7 @@ export class ApiGatewayWidget extends ReactWidget {
 
     this._commands = commands;
     this._settings = settings;
+    this._services = services;
   }
 
   render() {
@@ -28,10 +31,12 @@ export class ApiGatewayWidget extends ReactWidget {
       <ApiGatewayPanel
         commands={this._commands}
         settings={this._settings}
+        services={this._services}
       />
     );
   }
 
   private _commands: CommandRegistry;
   private _settings: ISettingRegistry.ISettings;
+  private _services: IService[];
 }

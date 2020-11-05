@@ -10,7 +10,10 @@ import { IMainMenu } from '@jupyterlab/mainmenu';
 import { jupyterIcon } from '@jupyterlab/ui-components';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { Menu } from '@lumino/widgets';
+import { IService } from './tokens';
 import { ApiGatewayWidget } from './widgets/ApiGatewayWidget';
+
+import * as dotenv from 'dotenv';
 
 /**
  * Initialization data for the jupyterlab-api-gateway extension.
@@ -23,13 +26,26 @@ const extension: JupyterFrontEndPlugin<void> = {
     ICommandPalette,
     ILayoutRestorer,
   ],
-  activate: (
+  activate: async (
     app: JupyterFrontEnd,
     mainMenu: IMainMenu,
     palette: ICommandPalette,
     restorer: ILayoutRestorer
   ) => {
     console.log('JupyterLab extension jupyterlab-api-gateway is activated!');
+    // Read .env file
+    dotenv.config();
+
+    console.log(process);
+
+    let services: IService[] = [];
+
+    const url = new URL(process.env.API_URL);
+    const response = await fetch( url.toString(), {} );
+    const data = await response.json();
+    services = data.apis;
+
+    console.log("Services read", services);
 
     let settings: ISettingRegistry.ISettings;
 
@@ -37,6 +53,7 @@ const extension: JupyterFrontEndPlugin<void> = {
     const apiGatewayPlugin = new ApiGatewayWidget(
       settings,
       app.commands,
+      services
     );
     apiGatewayPlugin.id = 'jp-api-gateway';
     apiGatewayPlugin.title.icon = jupyterIcon;
