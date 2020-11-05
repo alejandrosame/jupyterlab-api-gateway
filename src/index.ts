@@ -13,7 +13,8 @@ import { Menu } from '@lumino/widgets';
 import { IService } from './tokens';
 import { ApiGatewayWidget } from './widgets/ApiGatewayWidget';
 
-import * as dotenv from 'dotenv';
+// Load configuration
+import config from './config';
 
 /**
  * Initialization data for the jupyterlab-api-gateway extension.
@@ -33,19 +34,13 @@ const extension: JupyterFrontEndPlugin<void> = {
     restorer: ILayoutRestorer
   ) => {
     console.log('JupyterLab extension jupyterlab-api-gateway is activated!');
-    // Read .env file
-    dotenv.config();
-
-    console.log(process);
 
     let services: IService[] = [];
 
-    const url = new URL(process.env.API_URL);
+    const url = new URL(config.ApiUrl);
     const response = await fetch( url.toString(), {} );
     const data = await response.json();
     services = data.apis;
-
-    console.log("Services read", services);
 
     let settings: ISettingRegistry.ISettings;
 

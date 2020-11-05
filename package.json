@@ -25,26 +25,24 @@
     "url": "https://github.com/alejandrosame/jupyterlab-api-gateway.git"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "./bin/env.sh > ./src/config.ts && tsc",
     "clean": "rimraf lib tsconfig.tsbuildinfo",
     "eslint": "eslint . --ext .ts,.tsx --fix",
     "eslint:check": "eslint . --ext .ts,.tsx",
     "prepare": "jlpm run clean && jlpm run build",
-    "watch": "tsc -w"
+    "watch": "./bin/env.sh > ./src/config.ts && tsc -w"
   },
   "dependencies": {
     "@jupyterlab/application": "^2.2.6",
     "@jupyterlab/apputils": "^2.2.6",
     "@jupyterlab/mainmenu": "^2.2.4",
     "@material-ui/core": "^4.11.0",
-    "@types/node": "^14.14.6",
     "@types/react-window": "^1.8.2",
     "react-window": "^1.8.6"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.25.0",
     "@typescript-eslint/parser": "^2.25.0",
-    "dotenv": "^8.2.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.1",
     "eslint-plugin-prettier": "^3.1.2",
