@@ -89,14 +89,13 @@ export class ApiGatewayPanel extends React.Component<
     const services = this.props.services;
     return (
       <React.Fragment>
-        <ServiceMenu
-          service={services[0]}
-          generateCode={(endpoint) => console.log("Generate code for", endpoint.name)}
-        />
-        <ServiceMenu
-          service={services[1]}
-          generateCode={(endpoint) => console.log("Generate code for", endpoint.name)}
-        />
+        {services.map((service, index) =>
+          <ServiceMenu
+            key={index}
+            service={service}
+            generateCode={(endpoint) => console.log("Generate code for", endpoint.name)}
+          />
+        )}
       </React.Fragment>
     );
   }
