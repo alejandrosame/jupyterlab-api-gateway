@@ -7,3 +7,4 @@ node_modules/
 venv/
 .env
 src/config.ts
+style/icons/api-gateway.svg

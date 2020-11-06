@@ -1,6 +1,6 @@
 import { LabIcon } from '@jupyterlab/ui-components';
 
 // icon svg import statements
-import settingsSvg from '../../style/icons/settings.svg';
+import apiGatewaySvg from '../../style/icons/api-gateway.svg';
 
-export const settingsIcon = new LabIcon({ name: 'settings', svgstr: settingsSvg });
+export const apiGatewayIcon = new LabIcon({ name: 'apiGatewayExtension', svgstr: apiGatewaySvg });

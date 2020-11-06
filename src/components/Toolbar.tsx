@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { settingsIcon } from '../style/icons';
+import { settingsIcon } from '@jupyterlab/ui-components';
 import {
   spacer,
   toolbarButtonClass,

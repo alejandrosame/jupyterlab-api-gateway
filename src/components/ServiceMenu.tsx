@@ -1,19 +1,30 @@
 import ListItem from '@material-ui/core/ListItem';
+import {
+  caretDownIcon,
+  caretUpIcon,
+  //addIcon
+} from '@jupyterlab/ui-components';
 import * as React from 'react';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { classes } from 'typestyle';
 import {
   listItemClass,
-  listItemIconClass,
   generateCodeButtonClass,
-  wrapperClass
+  generateCodeButtonIconClass,
+  serviceMenuButtonClass,
+  serviceMenuButtonEnabledClass,
+  serviceMenuButtonIconClass,
+  serviceMenuButtonSubtitleClass,
+  serviceMenuButtonTitleClass,
+  serviceMenuButtonTitleWrapperClass,
+  serviceMenuButtonThumbnailClass,
+  serviceMenuWrapperClass,
 } from '../style/ServiceMenu';
-import { settingsIcon } from '../style/icons';
 import { IService, IEndpoint } from '../tokens';
 
-const ITEM_HEIGHT = 24.8; // HTML element height for a single branch
-const MIN_HEIGHT = 150; // Minimal HTML element height for the branches list
-const MAX_HEIGHT = 400; // Maximal HTML element height for the branches list
+const ITEM_HEIGHT = 24.8; // HTML element height for a single endpoint
+const MIN_HEIGHT = 75; // Minimal HTML element height for the endpoints list
+const MAX_HEIGHT = 400; // Maximal HTML element height for the endpoints list
 
 /**
  * Interface describing component properties.
@@ -59,7 +70,7 @@ export class ServiceMenu extends React.Component<
     super(props);
 
     this.state = {
-      isCollapsed: false
+      isCollapsed: true
     };
   }
 
@@ -71,12 +82,35 @@ export class ServiceMenu extends React.Component<
   render(): React.ReactElement {
     const service = this.props.service;
     return (
-      <div className={wrapperClass}>
-        <div>
-          <img src={service.thumbnail} alt={"Thumbnail for " + service.name} />
-          <span>{service.name}</span>
-        </div>
-        {this._renderEndpointList()}
+      <div className={serviceMenuWrapperClass}>
+        <button
+          className={classes(
+            serviceMenuButtonClass,
+            serviceMenuButtonEnabledClass
+          )}
+          title={'Show/hide service endpoints'}
+          onClick={this._onServiceClick}
+        >
+          {this.state.isCollapsed ? (
+            <caretDownIcon.react className={serviceMenuButtonIconClass} />
+          ) : (
+            <caretUpIcon.react className={serviceMenuButtonIconClass} />
+          )}
+          <div className={serviceMenuButtonTitleWrapperClass}>
+            <p className={serviceMenuButtonTitleClass}>{service.name}</p>
+
+            <p className={serviceMenuButtonSubtitleClass}>
+              <img
+                className={serviceMenuButtonThumbnailClass}
+                src={service.thumbnail}
+                alt={"Thumbnail for " + service.name}
+              />
+              {service.description || ''}
+            </p>
+          </div>
+        </button>
+
+        {!this.state.isCollapsed ? this._renderEndpointList() : null}
       </div>
     );
   }
@@ -122,17 +156,27 @@ export class ServiceMenu extends React.Component<
         className={classes(listItemClass)}
         style={style}
       >
-        <settingsIcon.react className={listItemIconClass} tag="span" />
-        {endpoint.name}
-        <input
+        {'• ' + endpoint.name}
+        <button
           className={generateCodeButtonClass}
-          type="button"
-          title="Generate code for endpoint"
-          value="Generate code"
           onClick={() => generateCode(endpoint)}
-        />
+        >
+          <p className={generateCodeButtonIconClass}>+</p>
+        </button>
       </ListItem>
     );
+  };
+
+  /**
+   * Callback invoked upon clicking a button to open/close the service menu.
+   *
+   * @param event - event object
+   */
+  private _onServiceClick = (): void => {
+    // Toggle the service menu:
+    this.setState({
+      isCollapsed: !this.state.isCollapsed
+    });
   };
 
 }

@@ -7,11 +7,12 @@ import {
   ICommandPalette
 } from '@jupyterlab/apputils';
 import { IMainMenu } from '@jupyterlab/mainmenu';
-import { jupyterIcon } from '@jupyterlab/ui-components';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { Menu } from '@lumino/widgets';
 import { IService } from './tokens';
 import { ApiGatewayWidget } from './widgets/ApiGatewayWidget';
+
+import { apiGatewayIcon } from './style/icons';
 
 // Load configuration
 import config from './config';
@@ -51,7 +52,7 @@ const extension: JupyterFrontEndPlugin<void> = {
       services
     );
     apiGatewayPlugin.id = 'jp-api-gateway';
-    apiGatewayPlugin.title.icon = jupyterIcon;
+    apiGatewayPlugin.title.icon = apiGatewayIcon;
     apiGatewayPlugin.title.caption = 'API Gateway';
 
     // Let the application restorer track the running panel for restoration of
