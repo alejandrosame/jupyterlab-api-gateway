@@ -1,6 +1,4 @@
 import { showDialog } from '@jupyterlab/apputils';
-import { ISettingRegistry } from '@jupyterlab/settingregistry';
-import { CommandRegistry } from '@lumino/commands';
 import * as React from 'react';
 
 import { ILanguageSelection, IService } from '../tokens';
@@ -13,17 +11,7 @@ import { Toolbar } from './Toolbar';
  */
 export interface IApiGatewayPanelProps {
   /**
-   * Jupyter App commands registry
-   */
-  commands: CommandRegistry;
-
-  /**
-   * ApiGatewayPanel extension settings.
-   */
-  settings: ISettingRegistry.ISettings;
-
-  /**
-   * ApiGatewayPanel extension settings.
+   * Services to generate code for.
    */
   services: IService[];
 }

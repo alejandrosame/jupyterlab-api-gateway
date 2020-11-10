@@ -3,53 +3,38 @@ import {
   JupyterFrontEnd,
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
-import {
-  ICommandPalette
-} from '@jupyterlab/apputils';
-import { IMainMenu } from '@jupyterlab/mainmenu';
-import { ISettingRegistry } from '@jupyterlab/settingregistry';
-import { Menu } from '@lumino/widgets';
-import { IService } from './tokens';
-import { ApiGatewayWidget } from './widgets/ApiGatewayWidget';
+import { INotebookTracker } from '@jupyterlab/notebook';
 
+import { ApiGatewayExtension } from './model';
+import { ApiGatewayWidget } from './widgets/ApiGatewayWidget';
 import { apiGatewayIcon } from './style/icons';
 
-// Load configuration
-import config from './config';
+import { IApiGatewayExtension } from './tokens';
 
 /**
  * Initialization data for the jupyterlab-api-gateway extension.
  */
-const extension: JupyterFrontEndPlugin<void> = {
+const extension: JupyterFrontEndPlugin<IApiGatewayExtension> = {
   id: 'jupyterlab-api-gateway',
   autoStart: true,
   requires: [
-    IMainMenu,
-    ICommandPalette,
     ILayoutRestorer,
+    INotebookTracker,
   ],
   activate: async (
     app: JupyterFrontEnd,
-    mainMenu: IMainMenu,
-    palette: ICommandPalette,
-    restorer: ILayoutRestorer
+    restorer: ILayoutRestorer,
+    notebook_tracker: INotebookTracker
   ) => {
-    console.log('JupyterLab extension jupyterlab-api-gateway is activated!');
-
-    let services: IService[] = [];
-
-    const url = new URL(config.ApiUrl);
-    const response = await fetch( url.toString(), {} );
-    const data = await response.json();
-    services = data.apis;
-
-    let settings: ISettingRegistry.ISettings;
+    // Create the Git model
+    const apiGatewayExtension = new ApiGatewayExtension(
+      notebook_tracker
+    );
+    await apiGatewayExtension.ready;
 
     // Create the API Gateway widget sidebar
     const apiGatewayPlugin = new ApiGatewayWidget(
-      settings,
-      app.commands,
-      services
+      apiGatewayExtension
     );
     apiGatewayPlugin.id = 'jp-api-gateway';
     apiGatewayPlugin.title.icon = apiGatewayIcon;
@@ -64,20 +49,8 @@ const extension: JupyterFrontEndPlugin<void> = {
     // sessions widget in the sidebar.
     app.shell.add(apiGatewayPlugin, 'left', { rank: 200 });
 
-
-    // Add mock command to 'Marketplace' section
-    const command: string = 'marketplace:generate';
-    app.commands.addCommand(command, {
-      label: 'Add code snippet',
-      execute: () => {
-        console.log('Invoke code generation');
-      }
-    });
-
-    // Add a menu for the plugin
-    const commands = app.commands;
-    const menu = new Menu({ commands });
-    mainMenu.addMenu(menu, { rank: 60 });
+    console.log('JupyterLab extension jupyterlab-api-gateway is activated!');
+    return apiGatewayExtension;
   }
 };
 

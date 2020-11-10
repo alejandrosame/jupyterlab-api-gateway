@@ -1,9 +1,7 @@
 import { ReactWidget } from '@jupyterlab/apputils';
-import { ISettingRegistry } from '@jupyterlab/settingregistry';
-import { CommandRegistry } from '@lumino/commands';
 import { Widget } from '@lumino/widgets';
 import * as React from 'react';
-import { IService } from '../tokens';
+import { IApiGatewayExtension, IService } from '../tokens';
 import { ApiGatewayPanel } from '../components/ApiGatewayPanel';
 import { ApiGatewayWidgetStyle } from '../style/ApiGatewayWidgetStyle';
 
@@ -12,31 +10,23 @@ import { ApiGatewayWidgetStyle } from '../style/ApiGatewayWidgetStyle';
  */
 export class ApiGatewayWidget extends ReactWidget {
   constructor(
-    settings: ISettingRegistry.ISettings,
-    commands: CommandRegistry,
-    services: IService[],
+    model: IApiGatewayExtension,
     options?: Widget.IOptions
   ) {
     super(options);
     this.node.id = 'ApiGateway-root';
     this.addClass(ApiGatewayWidgetStyle);
 
-    this._commands = commands;
-    this._settings = settings;
-    this._services = services;
+    this._services = model.services;
   }
 
   render() {
     return (
       <ApiGatewayPanel
-        commands={this._commands}
-        settings={this._settings}
         services={this._services}
       />
     );
   }
 
-  private _commands: CommandRegistry;
-  private _settings: ISettingRegistry.ISettings;
-  private _services: IService[];
+  _services: IService[];
 }
