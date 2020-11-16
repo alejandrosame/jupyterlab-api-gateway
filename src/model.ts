@@ -1,7 +1,17 @@
+import {
+  showDialog,
+  showErrorMessage,
+  Dialog,
+} from '@jupyterlab/apputils';
 import { ISignal, Signal } from '@lumino/signaling';
-import { INotebookTracker } from '@jupyterlab/notebook';
+import { INotebookTracker /*, NotebookActions*/ } from '@jupyterlab/notebook';
 
-import { IApiGatewayExtension, ILanguageSelection, IService } from './tokens';
+import {
+  IApiGatewayExtension,
+  ILanguageSelection,
+  IService,
+  IEndpoint
+} from './tokens';
 
 // Load configuration
 import config from './config';
@@ -21,28 +31,10 @@ export class ApiGatewayExtension implements IApiGatewayExtension {
    * @returns extension model
    */
   constructor(
-    notebook_tracker: INotebookTracker
+    notebookTracker: INotebookTracker
   ) {
     this._readyPromise = this._getServices();
-    this._notebook_tracker = notebook_tracker;
-
-    console.log(this._notebook_tracker);
-
-    var request = new sdk.Request('https://www.google.com'),
-        language = 'nodejs',
-        variant = 'request',
-        options = {
-          indentCount: 3,
-          indentType: 'Space',
-          trimRequestBody: true,
-          followRedirect: true
-        };
-    codegen.convert(language, variant, request, options, function(error: any, snippet: any) {
-      if (error) {
-          console.log("error", error);
-      }
-      console.log("snippet", snippet);
-    });
+    this._notebookTracker = notebookTracker;
   }
 
   /**
@@ -88,6 +80,44 @@ export class ApiGatewayExtension implements IApiGatewayExtension {
   }
 
   /**
+   * Insert code inside the active cell
+   *
+   * @param endpoint - endpoint to generate code against
+   */
+  insertCode = (endpoint: IEndpoint) => {
+    var request = new sdk.Request(endpoint.host),
+        language = 'nodejs',
+        variant = 'request',
+        options = {
+          indentCount: 3,
+          indentType: 'Space',
+          trimRequestBody: true,
+          followRedirect: true
+        };
+    codegen.convert(language, variant, request, options,
+      (error: any, snippet: any) => {
+        if (error) {
+            console.log("error", error);
+            showErrorMessage('Error generating code', error)
+            return;
+        }
+        const current = this._notebookTracker.currentWidget;
+        if (current === null){
+          showDialog({
+            title: 'Notebook not found',
+            body: 'Create a notebook and select a cell to insert content to.',
+            buttons: [Dialog.okButton({ label: 'Ok' })]
+          });
+          return;
+        }
+        const notebook = current.content;
+        const activeCell = notebook.activeCell;
+        activeCell.model.value.text = snippet;
+      }
+    );
+  }
+
+  /**
    * Dispose of model resources.
    */
   dispose(): void {
@@ -122,7 +152,7 @@ export class ApiGatewayExtension implements IApiGatewayExtension {
     return Promise.resolve()
   }
 
-  private _notebook_tracker: INotebookTracker;
+  private _notebookTracker: INotebookTracker;
   private _currentLanguage: ILanguageSelection;
   private _isDisposed = false;
   private _readyPromise: Promise<void>;

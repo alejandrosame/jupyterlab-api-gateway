@@ -22,10 +22,18 @@ export interface IApiGatewayExtension extends IDisposable {
    */
   services: IService[];
 
+
   /**
    * A signal emitted when the user has changed the selected language.
    */
   readonly languageChanged: ISignal<IApiGatewayExtension, void>;
+
+  /**
+   * Insert code inside the active cell
+   *
+   * @param endpoint - endpoint to generate code against
+   */
+  insertCode: (endpoint: IEndpoint) => void;
 
   /**
    * A promise that fulfills when the model is ready;

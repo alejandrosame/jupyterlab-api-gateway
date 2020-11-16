@@ -1,7 +1,7 @@
 import { showDialog } from '@jupyterlab/apputils';
 import * as React from 'react';
 
-import { ILanguageSelection, IService } from '../tokens';
+import { ILanguageSelection, IApiGatewayExtension } from '../tokens';
 import { LanguageSelectionForm } from '../widgets/LanguageSelectionForm';
 import { ServiceMenu } from './ServiceMenu';
 import { Toolbar } from './Toolbar';
@@ -11,9 +11,9 @@ import { Toolbar } from './Toolbar';
  */
 export interface IApiGatewayPanelProps {
   /**
-   * Services to generate code for.
+   * APIGateway panel model.
    */
-  services: IService[];
+  model: IApiGatewayExtension;
 }
 
 /**
@@ -74,14 +74,15 @@ export class ApiGatewayPanel extends React.Component<
    * @returns React element
    */
   private _renderMain(): React.ReactElement {
-    const services = this.props.services;
+    const services = this.props.model.services;
+    const insertCodeFn = this.props.model.insertCode;
     return (
       <React.Fragment>
         {services.map((service, index) =>
           <ServiceMenu
             key={index}
             service={service}
-            generateCode={(endpoint) => console.log("Generate code for", endpoint.name)}
+            generateCode={(endpoint) => insertCodeFn(endpoint)}
           />
         )}
       </React.Fragment>

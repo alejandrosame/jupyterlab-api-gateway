@@ -1,7 +1,7 @@
 import { ReactWidget } from '@jupyterlab/apputils';
 import { Widget } from '@lumino/widgets';
 import * as React from 'react';
-import { IApiGatewayExtension, IService } from '../tokens';
+import { IApiGatewayExtension } from '../tokens';
 import { ApiGatewayPanel } from '../components/ApiGatewayPanel';
 import { ApiGatewayWidgetStyle } from '../style/ApiGatewayWidgetStyle';
 
@@ -15,18 +15,17 @@ export class ApiGatewayWidget extends ReactWidget {
   ) {
     super(options);
     this.node.id = 'ApiGateway-root';
+    this._model = model;
     this.addClass(ApiGatewayWidgetStyle);
-
-    this._services = model.services;
   }
 
   render() {
     return (
       <ApiGatewayPanel
-        services={this._services}
+        model={this._model}
       />
     );
   }
 
-  _services: IService[];
+  _model: IApiGatewayExtension;
 }
