@@ -69,6 +69,11 @@ export interface ILanguageSelection {
   language: string;
 
   /**
+   * Print representation of programming language
+   */
+  label: string;
+
+  /**
    * Code generation variant
    */
   variant: string;

@@ -34,7 +34,10 @@ export class ApiGatewayExtension implements IApiGatewayExtension {
     notebookTracker: INotebookTracker
   ) {
     this._readyPromise = this._getServices();
+    this._languages = this._getLanguages();
+    this._currentLanguage = this.languages[0];
     this._notebookTracker = notebookTracker;
+    console.log(this._languages);
   }
 
   /**
@@ -86,8 +89,8 @@ export class ApiGatewayExtension implements IApiGatewayExtension {
    */
   insertCode = (endpoint: IEndpoint) => {
     var request = new sdk.Request(endpoint.host),
-        language = 'nodejs',
-        variant = 'request',
+        language = this.currentLanguage.language,
+        variant = this.currentLanguage.variant,
         options = {
           indentCount: 3,
           indentType: 'Space',
@@ -135,7 +138,21 @@ export class ApiGatewayExtension implements IApiGatewayExtension {
    *
    */
   protected _getLanguages(): ILanguageSelection[] {
-    return [];
+    const list: ILanguageSelection[] = [];
+
+    const supportedCodegens = codegen.getLanguageList();
+    supportedCodegens.forEach((language: any) => {
+      language.variants.forEach((variant: any) => {
+        const entry: ILanguageSelection = {
+          language: language.key,
+          label: language.label,
+          variant: variant.key
+        };
+        list.push(entry);
+      })
+    })
+
+    return list;
   }
 
   /**

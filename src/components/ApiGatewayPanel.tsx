@@ -95,12 +95,14 @@ export class ApiGatewayPanel extends React.Component<
    * @returns promise which selects a language
    */
   private _onSelectLanguage = async () => {
+    const languages = this.props.model.languages;
+    const currentLanguage = this.props.model.currentLanguage;
     const selection = await showDialog({
       title: 'Programming language selector',
       body: new LanguageSelectionForm(
         'Select programming language and variant for code generation',
-        ['Python - default', 'Python - beautifulsoup'],
-        'Python - default'
+        languages,
+        currentLanguage
       )
     });
 
