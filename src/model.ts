@@ -115,11 +115,20 @@ export class ApiGatewayExtension implements IApiGatewayExtension {
         language = this.currentLanguage.language,
         variant = this.currentLanguage.variant,
         options = {
-          indentCount: 3,
+          indentCount: 2,
           indentType: 'Space',
           trimRequestBody: true,
           followRedirect: true
         };
+
+    const keyHeaderString = ({
+      key: 'sandpit-key',
+      value: this._APIKey.value,
+    });
+    const keyHeader = new sdk.Header(keyHeaderString);
+
+    request.addHeader(keyHeader);
+
     codegen.convert(language, variant, request, options,
       (error: any, snippet: any) => {
         if (error) {
