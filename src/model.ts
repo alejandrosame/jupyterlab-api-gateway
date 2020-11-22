@@ -10,7 +10,9 @@ import {
   IApiGatewayExtension,
   ILanguageSelection,
   IService,
-  IEndpoint
+  IEndpoint,
+  ISettingsSelection,
+  IAPIKey
 } from './tokens';
 
 // Load configuration
@@ -36,6 +38,7 @@ export class ApiGatewayExtension implements IApiGatewayExtension {
     this._readyPromise = this._getServices();
     this._languages = this._getLanguages();
     this._currentLanguage = this.languages[0];
+    this._APIKey = {value: ""};
     this._notebookTracker = notebookTracker;
   }
 
@@ -65,7 +68,20 @@ export class ApiGatewayExtension implements IApiGatewayExtension {
    */
   set currentLanguage(value: ILanguageSelection) {
     this._currentLanguage = value;
-    this._stateChanged.emit(void 0);
+  }
+
+  /**
+   * User's API key to use in code generation.
+   */
+  get APIKey() {
+    return this._APIKey;
+  }
+
+  /**
+   * Setter for API key to use in code generation.
+   */
+  set APIKey(value: IAPIKey) {
+    this._APIKey = value;
   }
 
   /**
@@ -128,6 +144,17 @@ export class ApiGatewayExtension implements IApiGatewayExtension {
   }
 
   /**
+   * Update user selected settings
+   *
+   * @param settingsSelection - settings selected by the user
+   */
+  updateSettings = (settingsSelection: ISettingsSelection) => {
+    this.currentLanguage = settingsSelection.language;
+    this.APIKey = settingsSelection.APIKey;
+    this._stateChanged.emit(void 0);
+  };
+
+  /**
    * Dispose of model resources.
    */
   dispose(): void {
@@ -178,6 +205,7 @@ export class ApiGatewayExtension implements IApiGatewayExtension {
 
   private _notebookTracker: INotebookTracker;
   private _currentLanguage: ILanguageSelection;
+  private _APIKey: IAPIKey;
   private _isDisposed = false;
   private _readyPromise: Promise<void>;
   private _services: IService[];

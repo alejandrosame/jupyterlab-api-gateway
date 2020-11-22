@@ -13,11 +13,10 @@ import { ActionButton } from './ActionButton';
  */
 export interface IToolbarProps {
   /**
-   * Callback to invoke in order to set language selection.
+   * Callback to invoke in order to update settings values.
    *
-   * @returns promise which selects a language
    */
-  selectLanguage: () => Promise<void>;
+  selectSettings: () => Promise<void>;
 }
 
 /**
@@ -60,7 +59,7 @@ export class Toolbar extends React.Component<IToolbarProps> {
           className={toolbarButtonClass}
           icon={settingsIcon}
           onClick={this._onSettingsClick}
-          title={'Select the language for code generation'}
+          title={'Settings'}
         />
       </div>
     );
@@ -75,8 +74,7 @@ export class Toolbar extends React.Component<IToolbarProps> {
    */
   private _onSettingsClick = async (): Promise<void> => {
     try {
-      await this.props.selectLanguage();
-
+      await this.props.selectSettings();
     } catch (error) {
       console.error(error);
     }

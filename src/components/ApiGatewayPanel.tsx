@@ -1,8 +1,8 @@
 import { showDialog } from '@jupyterlab/apputils';
 import * as React from 'react';
 
-import { ILanguageSelection, IApiGatewayExtension } from '../tokens';
-import { LanguageSelectionForm } from '../widgets/LanguageSelectionForm';
+import { IApiGatewayExtension, ISettingsSelection } from '../tokens';
+import { SettingsForm } from '../widgets/SettingsForm';
 import { ServiceMenu } from './ServiceMenu';
 import { Toolbar } from './Toolbar';
 
@@ -63,7 +63,7 @@ export class ApiGatewayPanel extends React.Component<
   private _renderToolbar(): React.ReactElement {
     return (
       <Toolbar
-        selectLanguage={this._onSelectLanguage}
+        selectSettings={this._onSelectSettings}
       />
     );
   }
@@ -94,22 +94,24 @@ export class ApiGatewayPanel extends React.Component<
    *
    * @returns promise which selects a language
    */
-  private _onSelectLanguage = async () => {
+  private _onSelectSettings = async () => {
     const languages = this.props.model.languages;
     const currentLanguage = this.props.model.currentLanguage;
+    const key = this.props.model.APIKey;
+
     const selection = await showDialog({
-      title: 'Programming language selector',
-      body: new LanguageSelectionForm(
-        'Select programming language and variant for code generation',
+      title: 'Settings',
+      body: new SettingsForm(
         languages,
-        currentLanguage
+        currentLanguage,
+        key
       )
     });
 
     if (selection.button.accept) {
-      // User selected a language and variant
-      const selected: ILanguageSelection = selection.value;
-      this.props.model.currentLanguage = selected;
+      // Collect user input
+      const selected: ISettingsSelection = selection.value;
+      this.props.model.updateSettings(selected);
     }
   };
 }

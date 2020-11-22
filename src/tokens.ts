@@ -18,9 +18,14 @@ export interface IApiGatewayExtension extends IDisposable {
   languages: ILanguageSelection[];
 
   /**
-   * The current language to generate code.
+   * The current language to generate code for.
    */
   currentLanguage: ILanguageSelection;
+
+  /**
+   * User's API key to use in code generation.
+   */
+  APIKey: IAPIKey;
 
   /**
    * Service list to generate code for.
@@ -33,6 +38,13 @@ export interface IApiGatewayExtension extends IDisposable {
    * @param endpoint - endpoint to generate code against
    */
   insertCode: (endpoint: IEndpoint) => void;
+
+  /**
+   * Update user selected settings
+   *
+   * @param settingsSelection - settings selected by the user
+   */
+  updateSettings: (settingsSelection: ISettingsSelection) => void;
 
   /**
    * A promise that fulfills when the model is ready;
@@ -76,4 +88,25 @@ export interface ILanguageSelection {
    * Code generation variant
    */
   variant: string;
+}
+
+
+export interface IAPIKey {
+  /**
+   * Value of the API key
+   */
+  value: string;
+}
+
+
+export interface ISettingsSelection {
+  /**
+   * API key used to generate code
+   */
+  APIKey: IAPIKey;
+
+  /**
+   * Language to generate code against
+   */
+  language: ILanguageSelection
 }
