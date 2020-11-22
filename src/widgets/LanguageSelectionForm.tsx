@@ -36,7 +36,9 @@ export class LanguageSelectionForm extends Widget
       const option = document.createElement('option');
       option.value = `${optionValue.language} - ${optionValue.variant}`;
       option.textContent = `${optionValue.label} - ${optionValue.variant}`;
-      if (optionValue === selected) {
+      if (optionValue.language === selected.language &&
+          optionValue.variant === selected.variant
+      ) {
         option.selected = true;
       }
       this._languageSelection.appendChild(option);
@@ -51,9 +53,10 @@ export class LanguageSelectionForm extends Widget
    * Returns the input value.
    */
   getValue(): ILanguageSelection {
+    const selectedIndex = this._languageSelection.selectedIndex;
     return {
       language: this._languageSelection.value.split(" - ")[0],
-      label: this._languageSelection.textContent.split(" - ")[0],
+      label: this._languageSelection.options[selectedIndex].text.split(" - ")[0],
       variant: this._languageSelection.value.split(" - ")[1]
     };
   }

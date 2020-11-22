@@ -75,7 +75,6 @@ export class Toolbar extends React.Component<IToolbarProps> {
    */
   private _onSettingsClick = async (): Promise<void> => {
     try {
-      console.log('Open settings');
       await this.props.selectLanguage();
 
     } catch (error) {

@@ -8,6 +8,11 @@ export const IApiGatewayExtension = new Token<IApiGatewayExtension>(EXTENSION_ID
 /** Interface for extension class */
 export interface IApiGatewayExtension extends IDisposable {
   /**
+   * A signal emitted when the model state changes.
+   */
+  readonly stateChanged: ISignal<IApiGatewayExtension, void>;
+
+  /**
    * Language list for code generation.
    */
   languages: ILanguageSelection[];
@@ -21,12 +26,6 @@ export interface IApiGatewayExtension extends IDisposable {
    * Service list to generate code for.
    */
   services: IService[];
-
-
-  /**
-   * A signal emitted when the user has changed the selected language.
-   */
-  readonly languageChanged: ISignal<IApiGatewayExtension, void>;
 
   /**
    * Insert code inside the active cell

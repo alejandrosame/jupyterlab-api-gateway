@@ -109,10 +109,7 @@ export class ApiGatewayPanel extends React.Component<
     if (selection.button.accept) {
       // User selected a language and variant
       const selected: ILanguageSelection = selection.value;
-      console.log("Selected language '", selected.language, "' and variant '",
-                  selected.variant, "'");
-    } else {
-      console.log("No language and variant selected")
+      this.props.model.currentLanguage = selected;
     }
   };
 }

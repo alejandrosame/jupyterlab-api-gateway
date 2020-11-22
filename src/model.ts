@@ -27,7 +27,7 @@ export class ApiGatewayExtension implements IApiGatewayExtension {
   /**
    * Returns an extension model.
    *
-   * @param nnotebook_tracker - notebook tracker to insert generated code
+   * @param notebook_tracker - notebook tracker to insert generated code
    * @returns extension model
    */
   constructor(
@@ -37,7 +37,13 @@ export class ApiGatewayExtension implements IApiGatewayExtension {
     this._languages = this._getLanguages();
     this._currentLanguage = this.languages[0];
     this._notebookTracker = notebookTracker;
-    console.log(this._languages);
+  }
+
+  /**
+   * A signal emitted when the model state changes.
+   */
+  get stateChanged(): ISignal<ApiGatewayExtension, void> {
+    return this._stateChanged;
   }
 
   /**
@@ -52,6 +58,14 @@ export class ApiGatewayExtension implements IApiGatewayExtension {
    */
   get currentLanguage() {
     return this._currentLanguage;
+  }
+
+  /**
+   * Setter for current language to generate code.
+   */
+  set currentLanguage(value: ILanguageSelection) {
+    this._currentLanguage = value;
+    this._stateChanged.emit(void 0);
   }
 
   /**
@@ -73,13 +87,6 @@ export class ApiGatewayExtension implements IApiGatewayExtension {
    */
   get ready(): Promise<void> {
     return this._readyPromise;
-  }
-
-  /**
-   * A signal emitted when the user has changed the selected language.
-   */
-  get languageChanged(): ISignal<IApiGatewayExtension, void> {
-    return this._languageChanged;
   }
 
   /**
@@ -175,5 +182,5 @@ export class ApiGatewayExtension implements IApiGatewayExtension {
   private _readyPromise: Promise<void>;
   private _services: IService[];
   private _languages: ILanguageSelection[];
-  private _languageChanged = new Signal<IApiGatewayExtension, void>(this);
+  private _stateChanged = new Signal<ApiGatewayExtension, void>(this);
 }
