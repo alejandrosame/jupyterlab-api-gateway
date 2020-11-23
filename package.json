@@ -25,7 +25,7 @@
     "url": "https://github.com/alejandrosame/jupyterlab-api-gateway.git"
   },
   "scripts": {
-    "build": "./bin/env.sh > ./src/config.ts && tsc",
+    "build": "./bin/check-env.sh && ./bin/env.sh > ./src/config.ts && tsc",
     "clean": "rimraf lib tsconfig.tsbuildinfo",
     "eslint": "eslint . --ext .ts,.tsx --fix",
     "eslint:check": "eslint . --ext .ts,.tsx",
