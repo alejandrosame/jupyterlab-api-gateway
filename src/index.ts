@@ -4,6 +4,7 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 import { INotebookTracker } from '@jupyterlab/notebook';
+import { IStateDB } from '@jupyterlab/statedb';
 
 import { ApiGatewayExtension } from './model';
 import { ApiGatewayWidget } from './widgets/ApiGatewayWidget';
@@ -11,24 +12,30 @@ import { apiGatewayIcon } from './style/icons';
 
 import { IApiGatewayExtension } from './tokens';
 
+const EXTENSION_ID = 'jupyterlab-api-gateway';
+
 /**
  * Initialization data for the jupyterlab-api-gateway extension.
  */
 const extension: JupyterFrontEndPlugin<IApiGatewayExtension> = {
-  id: 'jupyterlab-api-gateway',
+  id: EXTENSION_ID,
   autoStart: true,
   requires: [
     ILayoutRestorer,
     INotebookTracker,
+    IStateDB
   ],
   activate: async (
     app: JupyterFrontEnd,
     restorer: ILayoutRestorer,
-    notebook_tracker: INotebookTracker
+    notebook_tracker: INotebookTracker,
+    state: IStateDB
   ) => {
     // Create the Git model
     const apiGatewayExtension = new ApiGatewayExtension(
-      notebook_tracker
+      notebook_tracker,
+      state,
+      EXTENSION_ID
     );
     await apiGatewayExtension.ready;
 

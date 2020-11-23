@@ -3,8 +3,11 @@ import {
   showErrorMessage,
   Dialog,
 } from '@jupyterlab/apputils';
+import { INotebookTracker } from '@jupyterlab/notebook';
+import { IStateDB } from '@jupyterlab/statedb';
+
+import { ReadonlyJSONObject } from '@lumino/coreutils';
 import { ISignal, Signal } from '@lumino/signaling';
-import { INotebookTracker /*, NotebookActions*/ } from '@jupyterlab/notebook';
 
 import {
   IApiGatewayExtension,
@@ -33,9 +36,13 @@ export class ApiGatewayExtension implements IApiGatewayExtension {
    * @returns extension model
    */
   constructor(
-    notebookTracker: INotebookTracker
+    notebookTracker: INotebookTracker,
+    state: IStateDB,
+    id: string,
   ) {
-    this._readyPromise = this._getServices();
+    this._state = state;
+    this._id = id;
+    this._readyPromise = this._getServices().then(() => this._recoverState());
     this._languages = this._getLanguages();
     this._currentLanguage = this.languages[0];
     this._APIKey = {value: ""};
@@ -160,6 +167,7 @@ export class ApiGatewayExtension implements IApiGatewayExtension {
   updateSettings = (settingsSelection: ISettingsSelection) => {
     this.currentLanguage = settingsSelection.language;
     this.APIKey = settingsSelection.APIKey;
+    this._saveState();
     this._stateChanged.emit(void 0);
   };
 
@@ -212,6 +220,44 @@ export class ApiGatewayExtension implements IApiGatewayExtension {
     return Promise.resolve()
   }
 
+  /**
+   * Recover settings from saved states
+   *
+   */
+  protected async _recoverState(): Promise<void> {
+    this._state.fetch(this._id)
+      .then(value => {
+        if (value) {
+          const serialisedLang = (value as ReadonlyJSONObject)['currentLanguage'] as string;
+          const serialisedKey = (value as ReadonlyJSONObject)['APIKey'] as string;
+
+          this._currentLanguage = <ILanguageSelection>JSON.parse(serialisedLang);
+          this._APIKey = <IAPIKey>JSON.parse(serialisedKey);
+        }
+        Promise.resolve()
+      })
+      .catch(reason =>{
+        console.error(`Something went wrong for extension ${this._id}.\n${reason}`);
+        Promise.reject(reason)
+      });
+  }
+
+  /**
+   * Save settings in state object to be able to recover them on restore
+   *
+   */
+  protected _saveState(): void {
+    this._state.save(
+        this._id,
+        {
+          currentLanguage: JSON.stringify(this._currentLanguage),
+          APIKey: JSON.stringify(this._APIKey)
+        }
+    );
+}
+
+  private _state: IStateDB;
+  private _id: string;
   private _notebookTracker: INotebookTracker;
   private _currentLanguage: ILanguageSelection;
   private _APIKey: IAPIKey;
